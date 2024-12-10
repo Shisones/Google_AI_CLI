@@ -12,9 +12,9 @@ pub fn process_response(response: ApiResponse, verbose: &str) {
         println!("{}\n{}", "Gemini:".blue(), text);
         
         match verbose {
-            "metadata" => {
+            "debug" => {
                 let print_info = |label: &str, value: String| {
-                    println!("{}", format!("[i] {}: {}", label, value).yellow());
+                    println!("{}", format!("{} {}: {}", "[i]".yellow(), label, value));
                 };
 
                 print_info("Finish Reason", candidate.finish_reason);
@@ -36,7 +36,7 @@ pub fn process_response(response: ApiResponse, verbose: &str) {
             },
             "token" => {
                 let print_info = |label: &str, value: String| {
-                    println!("{}", format!("[i] {}: {}", label, value).yellow());
+                    println!("{}", format!("{} {}: {}", "[i]".yellow(), label, value));
                 };
 
                 print_info(
@@ -54,6 +54,12 @@ pub fn process_response(response: ApiResponse, verbose: &str) {
     }
 }
 
+pub fn test_response(response: ApiResponse) {
+    for candidate in response.candidates {
+        remove_markdown(&candidate.content.parts[0].text);
+    }
+}
+
 /// Reads user input from stdin and handles potential errors gracefully.
 pub fn scan() -> String {
     let mut input = String::new();
@@ -63,14 +69,14 @@ pub fn scan() -> String {
     match stdin().read_line(&mut input) {
         Ok(0) => {
             // EOF detected, exit gracefully
-            println!("{}", "[o] Goodbye!".green());
+            println!("{} Goodbye", "[o]".green());
             std::process::exit(0);
         }
         Ok(_) => {}
         Err(e) => {
             eprintln!(
-                "{} {}",
-                "[!] Failed to read input:".red(),
+                "{} Failed to read input: {}",
+                "[!]".red(),
                 e
             );
             std::process::exit(1);

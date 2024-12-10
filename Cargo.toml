@@ -10,3 +10,11 @@ regex = "1.11.1"
 reqwest = { version = "0.12.9", features = ["json"] }
 serde = { version = "1.0.215", features = ["derive"] }
 tokio = { version = "1.42.0", features = ["full"] }
+
+[profile.release]
+opt-level = 'z' 
+lto = true
+codegen-units = 1
+panic = 'abort'
+strip = true
+incremental = false
